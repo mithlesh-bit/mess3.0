@@ -8,13 +8,11 @@ router.get("/profile/editprofile", auth, controller.editProfileGet);
 router.get("/admin", controller.adminpost);
 router.get("/cardAlloatment", controller.cardAllotment);
 router.get("/login", controller.userlogin);
-// router.get("/editprofile", controller.editprofile);
 
 router.get("/recharge", controller.recharge);
 router.get("/testing", controller.testing);
 router.post("/contact", controller.contactPost);
 router.post("/editProfile", controller.editPost);
-// router.get("/profile/editProfile", auth, controller.editprofile);
 
 router.get("/profile/recharge", auth, controller.recharge);
 router.get("/testing", controller.testing);
