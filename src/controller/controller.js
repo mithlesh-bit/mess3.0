@@ -37,6 +37,8 @@ exports.registerPost = async (req, resp) => {
       Status,
       inputAddress,
       inputCollegeOrJob,
+      cardId,
+      amount,
     } = req.body;
     const checkemail = await registerSchema.findOne({ inputEmail });
     const checknumber = await registerSchema.findOne({ inputMobileNumber });
@@ -56,10 +58,23 @@ exports.registerPost = async (req, resp) => {
           email: inputEmail,
           number: inputMobileNumber,
           interval: Status,
-          password: inputPassword,
           college: inputCollegeOrJob,
           address: inputAddress,
+          amount,
+          password: inputPassword,
           confirmPassword: inputConfirmPassword,
+          cardId,
+        });
+
+        const currentDate = new Date().toLocaleString("en-IN", {
+          timeZone: "Asia/Kolkata",
+        });
+        const parts = currentDate.split(" ");
+        const indianDate = parts.slice(0, 4).join(" ");
+
+        userdata.money.push({
+          recharges: amount,
+          date: indianDate,
         });
         const token = await userdata.generateAuthToken();
         resp.cookie("jwt", token, {
