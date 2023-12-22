@@ -40,8 +40,11 @@ exports.registerPost = async (req, resp) => {
       cardId,
       amount,
     } = req.body;
-    const checkemail = await registerSchema.findOne({ inputEmail });
-    const checknumber = await registerSchema.findOne({ inputMobileNumber });
+    const checkemail = await registerSchema.findOne({
+      email:
+        inputEmail
+    });
+    const checknumber = await registerSchema.findOne({ number: inputMobileNumber });
 
     if (checknumber) {
       resp
@@ -83,9 +86,8 @@ exports.registerPost = async (req, resp) => {
           sameSite: "Strict",
         });
         const user = await userdata.save();
-        resp
-          .status(200)
-          .json({ success: true, message: "register successful", user });
+        resp.render("admin")
+
       } else {
         resp
           .status(401)
@@ -177,32 +179,6 @@ exports.editprofilePost = async (req, resp) => {
   }
 };
 
-// exports.profilePost = async (req, resp) => {
-//   console.log(111111111111);
-//   try {
-//     const token = req.cookies.jwt;
-//     const verify = jwt.verify(token, process.env.secretKey);
-//     const user = await registerSchema.findById(verify._id);
-//     if (!user) {
-//       return resp
-//         .status(401)
-//         .send("User not found you have to login or register.");
-//     }
-//     const { name, email, money } = req.body;
-//     console.log(name, email, money);
-//     if (name) user.name = name;
-//     if (email) user.email = email;
-//     if (money) user.money = money;
-//     await user.save();
-//     //TODO :
-//     resp.redirect("profile");
-//   } catch (error) {
-//     console.error(error);
-//     resp.status(401).send("Login timeout. Please login.");
-//   }
-// };
-
-//admin
 
 exports.adminpost = async (req, res) => {
   // res.render('admin')
@@ -521,11 +497,7 @@ exports.mealDone = async (req, res) => {
 
       if (userMealDone && userMealDone.mealDone.length > 0) {
         // User has already marked the meal as done for today
-        return res.status(400).json({
-          status: "error",
-          code: 400,
-          message: "You have already marked your meal as done today",
-        });
+        return res.send("already Done")
       }
 
       // Update the user's mealDone to indicate the meal is done for today
@@ -534,18 +506,11 @@ exports.mealDone = async (req, res) => {
         { $addToSet: { "mealDone": { date: indianDate, mealDoneOk: "done" } } }
       );
 
-      return res.status(200).json({
-        status: "success",
-        code: 200,
-        message: "Meal successfully marked as done",
-      });
+      return res.send("success")
     } else {
       // User has indicated that they are not taking a meal today
-      return res.status(400).json({
-        status: "error",
-        code: 400,
-        message: "You have indicated that you are not taking a meal today",
-      });
+      return res.send("not eligible")
+
     }
   } catch (error) {
     console.error(error);
@@ -558,3 +523,23 @@ exports.mealDone = async (req, res) => {
 };
 
 
+
+
+
+exports.allMealDone = async (req, res) => {
+  try {
+    const currentDate = new Date().toLocaleDateString("en-IN", {
+      timeZone: "Asia/Kolkata",
+    });
+    const parts = currentDate.split(",");
+    const indianDate = parts.slice(0, 1).join(" ");
+
+    const users = await registerSchema.find({
+      'mealDone.date': indianDate,
+    });
+
+    res.status(200).json({ success: true, users });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error fetching users', error });
+  }
+}

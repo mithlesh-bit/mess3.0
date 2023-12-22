@@ -74,3 +74,6 @@ registerSchema.pre("save", async function (next) {
 });
 
 module.exports = mongoose.model("registers", registerSchema);
+
+
+

@@ -20,6 +20,7 @@ router.get("/profile", auth, controller.profileGet);
 router.get("/admin/costomers", controller.costomers);
 router.get("/admin/success", controller.success);
 router.get("/admin/notTaking", controller.notTaking);
+router.get("/admin/done", controller.allMealDone);
 router.get("/mealDone/:cardId", controller.mealDone);
 
 router.post("/cardAlloatment", controller.registerPost);
